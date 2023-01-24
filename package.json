@@ -100,5 +100,6 @@
     "html-janitor": "^2.0.4",
     "nanoid": "^3.1.22",
     "uuid": "^9.0.0"
-  }
+  },
+  "packageManager": "yarn@3.3.1"
 }
