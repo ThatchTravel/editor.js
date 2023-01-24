@@ -1,63 +1,21 @@
-name: Publish package to NPM
+name: on release
 
 on:
   release:
-    types:
-      - published
+    types: [created]
 
 jobs:
-  publish:
+  publish-github-registry:
     runs-on: ubuntu-latest
     steps:
-      # Checkout to target branch
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          # Pull submodules
-          submodules: 'recursive'
-
-      - name: Get package info
-        id: package
-        uses: codex-team/action-nodejs-package-info@v1
-
-      # Setup node environment
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14.17.0
-          registry-url: https://registry.npmjs.org/
-
-      # Prepare, build and publish project
-      - name: Install dependencies
-        run: yarn
-
-      - name: Build output files
-        run: yarn build
-
-      - name: Publish the package with a NEXT tag
-        run: yarn publish --access=public --tag=next
+          node-version: 16
+          registry-url: https://npm.pkg.github.com/
+      - run: yarn install
+      - run: yarn ci:pull_paragraph
+      - run: yarn build
+      - run: yarn npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Add LATEST tag for the published package if this is not a prerelease version
-        if: github.event.release.prerelease != true
-        run: npm dist-tag add ${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }} latest
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  notify:
-    needs: publish
-    runs-on: ubuntu-latest
-    steps:
-      # Checkout to target branch
-      - uses: actions/checkout@v2
-
-      - name: Get package info
-        id: package
-        uses: codex-team/action-nodejs-package-info@v1
-
-      - name: Send a message
-        uses: codex-team/action-codexbot-notify@v1
-        with:
-          webhook: ${{ secrets.CODEX_BOT_NOTIFY_EDITORJS_PUBLIC_CHAT }}
-          message: '📦 [${{ steps.package.outputs.name }}](${{ steps.package.outputs.npmjs-link }}) ${{ steps.package.outputs.version }} was published'
-          parse_mode: 'markdown'
-          disable_web_page_preview: true
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}

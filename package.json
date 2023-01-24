@@ -1,5 +1,5 @@
 {
-  "name": "@editorjs/editorjs",
+  "name": "@thatch-travel/editorjs",
   "version": "2.26.5-uuid",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "clear": "rimraf dist && mkdirp dist",
+    "prepare": "yarn ci:pull_paragraph",
     "build": "yarn clear && yarn build:webpack:prod",
     "build:dev": "yarn clear && yarn build:webpack:dev",
     "build:webpack:dev": "webpack --mode development --progress --display-error-details --display-entrypoints --watch",
@@ -35,10 +36,7 @@
   },
   "author": "CodeX",
   "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/codex-team/editor.js.git"
-  },
+  "repository": "https://github.com/ThatchTravel/editor.js.git",
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/plugin-transform-runtime": "^7.9.0",
@@ -101,5 +99,9 @@
     "nanoid": "^3.1.22",
     "uuid": "^9.0.0"
   },
-  "packageManager": "yarn@3.3.1"
+  "packageManager": "yarn@3.3.1",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
+  }
 }
